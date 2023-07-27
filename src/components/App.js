@@ -3,6 +3,9 @@ import './App.css';
 import Header from './Header';
 import AddContact from './AddContact';
 import ContactList from './ContactList';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+// import {uuid} from uuid;
+import { v4 as uuid } from 'uuid';
 
 function App() {
   const LOCAL_STORAGE_KEY= "contact";
@@ -10,7 +13,7 @@ function App() {
 
   const addContactHandler = (contact) => {
     console.log(contact);
-    setContacts([...contacts,contact]);
+    setContacts([...contacts,{id: uuid(), ...contact}]);
   }
 
   useEffect(() => {
@@ -20,6 +23,14 @@ function App() {
     console.log(contacts);
   }, []);
 
+  const removeContactHandler = (id) =>{
+    const newContactList = contacts.filter((contact) => {
+      return contact.id !== id;
+    })
+
+    setContacts(newContactList);
+  }
+
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(contacts))
   }, [contacts]);
@@ -28,7 +39,7 @@ function App() {
    <div className='ui container'> 
      <Header/>
      <AddContact addContactHandler={addContactHandler}/>
-     <ContactList contacts={contacts}/>
+     <ContactList contacts={contacts} getContactId={removeContactHandler}/>
    </div>
   );
 }
